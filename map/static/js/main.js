@@ -3,6 +3,7 @@ var map = null;
 var sensorInfo = {};
 var name2id = {};
 
+var currentPositionMarker = null;
 var currentInfoWindow = null;
 var states = {
   'isOpened': false
@@ -33,13 +34,23 @@ function closeSidePage() {
  *  SEARCHING FUNCTION
  *
  */
-function search() {
-  var searchQuery = $('#location-query').val();
+function searchEnter() {
+  var locationQuery = $('#location-query').val();
+  var wordQuery = $('#freewd-query').val();
 
-  if (searchQuery || (window.event.keyCode == 13 && searchQuery)) {
+  if (window.event.keyCode == 13 && locationQuery) {
     $('#location-query').blur();
     $('#loading').fadeIn();
-    ajaxGLocAPI(searchQuery);
+    ajaxGLocAPI(locationQuery);
+  }
+}
+function search() {
+  var locationQuery = $('#location-query').val();
+  var wordQuery = $('#freewd-query').val();
+
+  if (searchQuery) {
+    $('#loading').fadeIn();
+    ajaxGLocAPI(locationQuery);
   }
 }
 function ajaxGLocAPI(searchQuery) {
@@ -65,11 +76,11 @@ function ajaxGLocAPI(searchQuery) {
     },
     error: function(json, status) {
       alert('ERROR, SEE LOG');
-      console.log(json);
     }
   });
 }
 function getSensorsByLocation(lat, lng) {
+  console.debug(lat + ',' + lng);
   $.ajax({
     url: "https://d2c.cloud.ht.sfc.keio.ac.jp/api/search",
     type: "GET",
@@ -82,6 +93,8 @@ function getSensorsByLocation(lat, lng) {
     success: function(json, status) {
       clearAll();
       updateDic(json.nodelist);
+      alert(json.time);
+      $('#search-time').html(json.time);
       $('#loading').fadeOut();
       openSidePage();
       setMarker(json.nodelist);
@@ -101,6 +114,8 @@ function radarSearch(pos) {
     },
     success: function(json, status) {
       updateDic(json.nodelist);
+      alert(json.time);
+      $('#search-time').html(json.time);
       $('#loading').fadeOut();
       setMarker(json.nodelist);
       subscribeDevices(json.nodelist);
@@ -109,7 +124,7 @@ function radarSearch(pos) {
 }
 
 /*
- *  BELOW MAP MANAGING FUNCTION
+ *  MAP MANAGING FUNCTION
  *
  */
 function initMap() {
@@ -131,7 +146,7 @@ function initMap() {
   });
 
   google.maps.event.addListener(map, 'dragend', function() {
-    var searchQuery = $('#query').val();
+    var searchQuery = $('#location-query').val();
     if (searchQuery) {
       $('#loading').fadeIn();
       var mapCenter = map.getCenter();
@@ -182,10 +197,14 @@ function setMarker(sensors) {
 function markerEvent(marker, id) {
   marker.addListener('click', function() {
     openSidePage();
+    $('.accordion-content').each(function(i, elem) {
+      $('.accordion').foundation('up', $(elem));
+    });
+    $('.accordion').foundation('down', $('#' + id + '-content'), true);
     window.location.href = '/map/#' + id;
+
     map.panTo(new google.maps.LatLng(marker.position.lat(), marker.position.lng()));
     openInfoWindow(id);
-
   });
 
   return;
@@ -213,22 +232,64 @@ function setSoxClient() {
   client = new SoxClient(BOSHSERVICE, XMPPSERVER);     
   var soxEventListener = new SoxEventListener();
   soxEventListener.connectionFailed = function(soxEvent) {
-    window.alert('ERR: Connection Failed');
+    console.log('ERR: Connection Failed');
+    client.connect();
   };
   soxEventListener.subscriptionFailed = function(soxEvent){
-    return;
+    console.debug(soxEvent);
+    var nodeName = soxEvent.device.nodeName;
+    var id = name2id[nodeName];
+    var dataString = "<li class='result accordion-item' id='" + id + "'>"
+      + "<a href='#" + id + "-content' class='accordion-title' onClick=\"accordionTitleClicked('" + id + "')\">" + nodeName + "</a>"
+      + "<div id='" + id + "-content' class='accordion-content' data-tab-content><ul>";
+    for (i in soxEvent.device.transducers) {
+      var dev = soxEvent.device;
+      if (dev.transducers[i].id == 'url' || dev.transducers[i].id == 'latitude' ||
+        dev.transducers[i].id == 'longitude') {
+        // go next
+      }
+      else {
+        dataString += "<li>" + dev.transducers[i].id + ": --";
+        var unit =  dev.transducers[i].sensorData.unit;
+        if (unit) {
+         dataString += ' ' + unit; 
+        }
+        dataString += "</li>";
+      }
+    }
+    dataString += "</ul></div></li>";
+
+    // convert nodeName to nodeId
+    if (!sensorInfo[id]) {
+      sensorInfo[id] = {};
+    }
+    sensorInfo[id].detail = dataString;
+    if (document.getElementById(id) != null) {
+      $('#' + id).replaceWith(dataString);
+    }
+    else {
+      $('.accordion').append(dataString);
+    }
+    Foundation.reInit('accordion');
+    $('#result-num').html(Object.keys(name2id).length);
   };
   soxEventListener.sensorDataReceived = function(soxEvent){
     // create DOM element
     var nodeName = soxEvent.device.nodeName;
     var id = name2id[nodeName];
-    var dataString = "<div id='" + id + "'><p>" + nodeName + "</p><ul>";
+    var dataString = "<li class='result accordion-item' id='" + id + "'>"
+      + "<a href='#" + id + "-content' class='accordion-title' onClick=\"accordionTitleClicked('" + id + "')\">" + nodeName + "</a>"
+      + "<div id='" + id + "-content' class='accordion-content' data-tab-content><ul>";
     for (i in soxEvent.device.transducers) {
       var dev = soxEvent.device;
       if (dev.transducers[i].sensorData != null) {
         if (dev.transducers[i].sensorData.rawValue.lastIndexOf('data:image', 0) === 0) {
           dataString += "<li>" + dev.transducers[i].id  + ": " +
             "<img src='" + dev.transducers[i].sensorData.rawValue + "'/></li>";
+        }
+        else if (dev.transducers[i].id == 'url' || dev.transducers[i].id == 'latitude' ||
+          dev.transducers[i].id == 'longitude') {
+          // go next
         }
         else {
           dataString += "<li>" + dev.transducers[i].id + ": " +
@@ -241,7 +302,7 @@ function setSoxClient() {
         }
       }
     }
-    dataString += "</ul></div>";
+    dataString += "</ul></div></li>";
 
     // convert nodeName to nodeId
     if (!sensorInfo[id]) {
@@ -252,8 +313,9 @@ function setSoxClient() {
       $('#' + id).replaceWith(dataString);
     }
     else {
-      $('#lists').append(dataString);
+      $('.accordion').append(dataString);
     }
+    Foundation.reInit('accordion');
     $('#result-num').html(Object.keys(name2id).length);
   };
 
@@ -282,7 +344,7 @@ function clearAll() {
   }
   sensorInfo = {};
   name2id = {};
-  document.getElementById("lists").innerHTML = '';
+  $('.accordion').html('');
 
   return;
 }
@@ -291,15 +353,43 @@ function updateDic(nodelist) {
     name2id[nodelist[i].nodeid] = nodelist[i].id;
   }
 }
+function successCallback(pos) {
+  var positionLat = pos.coords.latitude;
+  var positionLng = pos.coords.longitude;
+  INIT_MAP_CENTER = {
+    lat: positionLat,
+    lng: positionLng
+  };
+  currentPositionMarker = new google.maps.Marker({
+      position: INIT_MAP_CENTER,
+      map: map,
+      title: '現在地',
+      icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+  });
+
+  panMap(positionLat, positionLng);
+}
+function errorCallback(error) {
+  window.alert('位置情報が読み取れませんでした');
+}
+function accordionTitleClicked(id) {
+  marker = sensorInfo[id].marker;
+  map.panTo(new google.maps.LatLng(marker.position.lat(), marker.position.lng()));
+  openInfoWindow(id);
+}
 
 /*
  *  MAIN FUNCTION
  *
  */
 var main = function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+  }
   $(document).foundation();
   setSoxClient();
 };
 
 $(main);
+
 

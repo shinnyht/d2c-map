@@ -6,6 +6,7 @@
 #location-query {
     width: 33%;
 }
+
 #freewd-query {
     margin: 0 2% 0 2%;
     width: 63%;
@@ -40,6 +41,15 @@
     z-index: 999;
 }
 
+#search-time {
+    float: right; 
+    padding-right: 1rem;
+    font-size: 70%;
+    top: -1rem;
+    position: relative;
+    color: gray;
+}
+
 #result-area { 
     display: block;
     height: 85%;
@@ -50,18 +60,22 @@
     border-right: solid 1px black;
 }
 
-#lists {
-    overflow-Y: scroll;
-    // height: calc(100% - 50px);
-    height: 90%;
-}
-
 #menu-icon {
     z-index: 300;
     position: absolute;
     top: 15%;
     left: 0;
     background-color: #FFFFFF;
+}
+
+.accordion {
+    overflow-Y: scroll;
+    height: 90%;
+}
+
+.result {
+    width: 80%;
+    margin-left: 10%;
 }
 
 .margin-vertical {

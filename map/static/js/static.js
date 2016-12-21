@@ -1,6 +1,6 @@
 
 var API_KEY = 'AIzaSyCBIhDEW0n8O6HAS20eoDfweL8lWLGxEtE';
-var BOSHSERVICE = 'http://sox.ht.sfc.keio.ac.jp:5280/http-bind/';
+var BOSHSERVICE = 'https://sox-proxy.ht.sfc.keio.ac.jp/sox/http-bind/';
 var XMPPSERVER = 'sox.ht.sfc.keio.ac.jp';
 
 var INIT_MAP_CENTER = {

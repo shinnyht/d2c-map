@@ -7,8 +7,9 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="stylesheet" href="static/css/foundation.min.css">
+    <link rel="stylesheet" href="static/css/accordion.scss">
     <link rel="stylesheet" href="static/css/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="static/css/style.css?date=hoge">
+    <link rel="stylesheet" href="static/css/style.css?date=ab">
     <script src="static/js/vendor/jquery.js"></script>
 
     <script src="static/js/SoxJS/lib/jquery.dropotron.min.js"></script>
@@ -30,8 +31,8 @@
     <div class="large-6 columns" id="option-bar">
       <div class="input-group">
       <a id="icon" class="input-group-label" href="/map"></a>
-      <input id="location-query" class="input-group-field" placeholder="  場所 " onkeydown="search()"></input>
-        <input id="freewd-query" class="input-group-field" placeholder="  センサ または ノード名" onkeydown="search()"></input>
+      <input id="location-query" class="input-group-field" placeholder="  場所 " onkeydown="searchEnter()"></input>
+        <input id="freewd-query" class="input-group-field" placeholder="  センサ または ノード名" onkeydown="searchEnter()"></input>
         <div class="input-group-button">
           <input type="button" class="button" value="検索" onClick="search()"></input>
         </div>
@@ -41,18 +42,24 @@
     <i id="menu-icon" class="fa fa-list-ul fa-3x" aria-hidden="true" onClick="pagination()"></i>
     <div id="result-area" class="large-4">
       <div class="margin-vertical" class="row">
-        <center><h5>検索結果: <span id="result-num">0</span>件</h5></center>
+        <center><h5>検索結果: 
+          <span id="result-num">0</span>件
+        </h5></center>
+        <span id="search-time"></span>
       </div>
       <hr class="no-margin" />
-      <div id="lists" class="row"></div>
+      <div id="lists" class="row">
+        <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true" role="tablist"></ul>
+      </div>
     </div>
     <div id="map" />
   </body>
   <footer>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBIhDEW0n8O6HAS20eoDfweL8lWLGxEtE&callback=initMap" async defer></script>
-    <script src="static/js/vendor/foundation.min.js"></script>
-    <script src="static/js/static.js?date=now"></script>
-    <script src="static/js/main.js?date=noda"></script>
+    <script src="static/js/vendor/foundation.min.js?date=hgo"></script>
+    <script src="static/js/static.js?date=naw"></script>
+    <script src="https://cdn.jsdelivr.net/foundation/6.1.1/js/foundation.accordion.js"></script>
+    <script src="static/js/main.js?date=haks"></script>
   </footer>
 </html>
 
