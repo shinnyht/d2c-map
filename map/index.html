@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOX Sensor Search Map</title>
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="stylesheet" href="static/css/foundation.min.css">
+    <link rel="stylesheet" href="static/css/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/style.css?date=hoge">
+    <script src="static/js/vendor/jquery.js"></script>
+
+    <script src="static/js/SoxJS/lib/jquery.dropotron.min.js"></script>
+    <script src="static/js/SoxJS/lib/config.js"></script>
+    <script src="static/js/SoxJS/lib/underscore-min.js"></script>
+    <script src="static/js/SoxJS/lib/backbone.js"></script>
+    <script src="static/js/SoxJS/lib/strophe.js"></script>
+    <script src="static/js/SoxJS/lib/sox.strophe.pubsub.js"></script>
+    <script src="static/js/SoxJS/lib/strophe.x.js"></script>
+    <script src="static/js/SoxJS/lib/jscron.js"></script>
+
+    <script src="static/js/SoxJS/sox/SoxClient.js"></script>
+    <script src="static/js/SoxJS/sox/SoxEventListener.js"></script>
+    <script src="static/js/SoxJS/sox/Device.js"></script>
+    <script src="static/js/SoxJS/sox/Transducer.js"></script>
+    <script src="static/js/SoxJS/sox/SensorData.js"></script>
+  </head>
+  <body>
+    <div class="large-6 columns" id="option-bar">
+      <div class="input-group">
+      <a id="icon" class="input-group-label" href="/map"></a>
+      <input id="location-query" class="input-group-field" placeholder="  場所 " onkeydown="search()"></input>
+        <input id="freewd-query" class="input-group-field" placeholder="  センサ または ノード名" onkeydown="search()"></input>
+        <div class="input-group-button">
+          <input type="button" class="button" value="検索" onClick="search()"></input>
+        </div>
+      </div>
+    </div>
+    <img id="loading" src="./static/img/load.gif"></img>
+    <i id="menu-icon" class="fa fa-list-ul fa-3x" aria-hidden="true" onClick="pagination()"></i>
+    <div id="result-area" class="large-4">
+      <div class="margin-vertical" class="row">
+        <center><h5>検索結果: <span id="result-num">0</span>件</h5></center>
+      </div>
+      <hr class="no-margin" />
+      <div id="lists" class="row"></div>
+    </div>
+    <div id="map" />
+  </body>
+  <footer>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBIhDEW0n8O6HAS20eoDfweL8lWLGxEtE&callback=initMap" async defer></script>
+    <script src="static/js/vendor/foundation.min.js"></script>
+    <script src="static/js/static.js?date=now"></script>
+    <script src="static/js/main.js?date=noda"></script>
+  </footer>
+</html>
+

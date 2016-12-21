@@ -1,0 +1,73 @@
+#option-bar {
+    height: 15%;
+    padding: .9375rem;
+}
+
+#location-query {
+    width: 33%;
+}
+#freewd-query {
+    margin: 0 2% 0 2%;
+    width: 63%;
+}
+
+#map {
+    z-index: 100;
+    height: 85%;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border-left: solid 1px black;
+}
+
+#icon {
+    background:url(../img/logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 90px;
+    height: 25px;
+    border: none;
+}
+
+#loading {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 40%;
+    margin-left: -44px;
+    z-index: 999;
+}
+
+#result-area { 
+    display: block;
+    height: 85%;
+    position: absolute;
+    top: 15%;
+    background: #FAFAFA;
+    z-index: 10;
+    border-right: solid 1px black;
+}
+
+#lists {
+    overflow-Y: scroll;
+    // height: calc(100% - 50px);
+    height: 90%;
+}
+
+#menu-icon {
+    z-index: 300;
+    position: absolute;
+    top: 15%;
+    left: 0;
+    background-color: #FFFFFF;
+}
+
+.margin-vertical {
+    margin: 15px 0 15px 0;
+}
+
+.no-margin {
+    margin: 0 0 0 0;
+}
